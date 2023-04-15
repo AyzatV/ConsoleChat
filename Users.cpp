@@ -50,4 +50,14 @@ namespace aiafpb1
 
 	// предикат для поиска пользователя по имени (через User& c), передается по указателю в TArray.tryGetOne через функцию nameFound (см. ниже)
 	bool Users::selectByName(const User& u, User& c) { return (u.log == c.log || u.name == c.name); }
+
+	// предикат для поиска пользователя по логину (через User& c), передается по указателю в TArray.tryGetOne через функцию logFound (см. ниже)
+	bool Users::selectByLog(const User& u, User& c) { return (u.log == c.log); }
+
+	bool Users::nameFound(User& c, size_t& i) { return m_users.tryGetOne(selectByName, c, i); }
+
+	bool Users::logFound(User& c, size_t& i) { return m_users.tryGetOne(selectByLog, c, i); }
+
+	// проверка наличия зарегистрированных пользователей
+	bool Users::empty() const { return (m_users.size() == 0); }
 }
