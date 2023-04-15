@@ -59,5 +59,19 @@ namespace aiafpb1
 		return result;
 	}
 
+	std::vector<std::reference_wrapper<Message>> Messages::getCommon()
+	{
+		Message c;
+		return m_mess.getSelection(selectCommon, c);
+	}
 
+	std::vector<std::reference_wrapper<Message>> Messages::getPaired(Message& c)
+	{
+		return m_mess.getSelection(selectPaired, c);
+	}
+
+	std::vector<std::reference_wrapper<Message>> Messages::getFresh(Message& c)
+	{
+		return m_mess.getSelection(selectFresh, c);
+	}
 }
