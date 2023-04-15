@@ -60,4 +60,13 @@ namespace aiafpb1
 
 	// проверка наличия зарегистрированных пользователей
 	bool Users::empty() const { return (m_users.size() == 0); }
+
+	// вывод списка "полных" имен пользователей
+	std::stringstream Users::showNames() const
+	{
+		std::stringstream info;
+		info << std::endl << "Имена пользователей:" << std::endl;
+		for (size_t i = 0; i < m_users.size(); i++) { info << m_users[i].fullName() << std::endl; }
+		return info;
+	}
 }
