@@ -34,4 +34,20 @@ namespace aiafpb1
 		out << "   имя: " << u.name << std::endl;
 		return out;
 	}
+
+	Users::Users() {}
+	Users::~Users() {}
+
+	// добавление пользователя в массив
+	size_t Users::add(const User& u)
+	{
+		m_users.add_last(u);
+		return m_users.size() - 1;
+	}
+
+	// фиксация времени просмотра пользователем общего чата
+	void Users::fixTime(size_t index) { m_users[index].last_seen.renew(); }
+
+	// предикат для поиска пользователя по имени (через User& c), передается по указателю в TArray.tryGetOne через функцию nameFound (см. ниже)
+	bool Users::selectByName(const User& u, User& c) { return (u.log == c.log || u.name == c.name); }
 }
