@@ -32,4 +32,33 @@ namespace aiafpb1
 	Messages::Messages() {}
 	Messages::~Messages() {}
 
+	// добавление сообщения в массив
+	void Messages::add(const Message& m) { m_mess.add_last(m); }
+
+	// предикат (условие) для отбора общих сообщений, передается по указателю в TArray.getSelection через функцию getCommon (см. ниже)
+	bool Messages::selectCommon(const Message& m, Message& c)
+	{
+		return (m.to_name.empty());
+	}
+
+	// предикат (условие) для отбора парных сообщений, передается по указателю в TArray.getSelection через функцию getPaired (см. ниже)
+	bool Messages::selectPaired(const Message& m, Message& c)
+	{
+		return ((m.to_name == c.to_name && m.from_name == c.from_name) || (m.to_name == c.from_name && m.from_name == c.to_name));
+	}
+
+	// предикат (условие) для отбора непрочитанных сообщений, передается по указателю в TArray.getSelection через функцию getFresh (см. ниже)
+	bool Messages::selectFresh(const Message& m, Message& c)
+	{
+		bool result = false;
+		if (c.from_name.empty())
+		{
+			if (m.to_name.empty()) { result = (m.time > c.time); }
+			else { result = (m.fresh && m.to_name == c.to_name); }
+		}
+		else { result = (m.from_name == c.from_name && m.to_name == c.to_name && m.fresh); }
+		return result;
+	}
+
+
 }
