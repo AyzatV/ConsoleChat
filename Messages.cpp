@@ -1,4 +1,4 @@
-п»ї#include "Messages.h"
+#include "Messages.h"
 
 namespace aiafpb1
 {
@@ -15,15 +15,15 @@ namespace aiafpb1
 		return *this;
 	}
 
-	// РІС‹РІРѕРґ РїР°СЂР°РјРµС‚СЂРѕРІ СЃРѕРѕР±С‰РµРЅРёСЏ РІ РїРѕС‚РѕРє, РёСЃРїРѕР»СЊР·СѓРµС‚СЃСЏ РґР»СЏ РІС‹РІРѕРґР° СЃРїРёСЃРєР° СЃРѕРѕР±С‰РµРЅРёР№
+	// вывод параметров сообщения в поток, используется для вывода списка сообщений
 	std::ostream& operator<<(std::ostream& out, const Message& m)
 	{
-		out << std::endl << "РѕС‚РїСЂР°РІР»РµРЅРѕ " << m.time << " РїРѕР»СЊР·РѕРІР°С‚РµР»РµРј [" << m.from_name << "]";
-		if (m.to_name.empty()) { out << " РґР»СЏ РІСЃРµС… РїРѕР»СЊР·РѕРІР°С‚РµР»РµР№:"; }
+		out << std::endl << "отправлено " << m.time << " пользователем [" << m.from_name << "]";
+		if (m.to_name.empty()) { out << " для всех пользователей:"; }
 		else
 		{
-			out << " РґР»СЏ РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ [" << m.to_name << "]:";
-			if (!m.fresh) { out << std::endl << "[СЃРѕРѕР±С‰РµРЅРёРµ РїСЂРѕС‡РёС‚Р°РЅРѕ РїРѕР»СѓС‡Р°С‚РµР»РµРј]"; }
+			out << " для пользователя [" << m.to_name << "]:";
+			if (!m.fresh) { out << std::endl << "[сообщение прочитано получателем]"; }
 		}
 		out << std::endl << m.text << std::endl;
 		return out;
@@ -32,22 +32,22 @@ namespace aiafpb1
 	Messages::Messages() {}
 	Messages::~Messages() {}
 
-	// РґРѕР±Р°РІР»РµРЅРёРµ СЃРѕРѕР±С‰РµРЅРёСЏ РІ РјР°СЃСЃРёРІ
+	// добавление сообщения в массив
 	void Messages::add(const Message& m) { m_mess.add_last(m); }
 
-	// РїСЂРµРґРёРєР°С‚ (СѓСЃР»РѕРІРёРµ) РґР»СЏ РѕС‚Р±РѕСЂР° РѕР±С‰РёС… СЃРѕРѕР±С‰РµРЅРёР№, РїРµСЂРµРґР°РµС‚СЃСЏ РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ РІ TArray.getSelection С‡РµСЂРµР· С„СѓРЅРєС†РёСЋ getCommon (СЃРј. РЅРёР¶Рµ)
+	// предикат (условие) для отбора общих сообщений, передается по указателю в TArray.getSelection через функцию getCommon (см. ниже)
 	bool Messages::selectCommon(const Message& m, Message& c)
 	{
 		return (m.to_name.empty());
 	}
 
-	// РїСЂРµРґРёРєР°С‚ (СѓСЃР»РѕРІРёРµ) РґР»СЏ РѕС‚Р±РѕСЂР° РїР°СЂРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№, РїРµСЂРµРґР°РµС‚СЃСЏ РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ РІ TArray.getSelection С‡РµСЂРµР· С„СѓРЅРєС†РёСЋ getPaired (СЃРј. РЅРёР¶Рµ)
+	// предикат (условие) для отбора парных сообщений, передается по указателю в TArray.getSelection через функцию getPaired (см. ниже)
 	bool Messages::selectPaired(const Message& m, Message& c)
 	{
 		return ((m.to_name == c.to_name && m.from_name == c.from_name) || (m.to_name == c.from_name && m.from_name == c.to_name));
 	}
 
-	// РїСЂРµРґРёРєР°С‚ (СѓСЃР»РѕРІРёРµ) РґР»СЏ РѕС‚Р±РѕСЂР° РЅРµРїСЂРѕС‡РёС‚Р°РЅРЅС‹С… СЃРѕРѕР±С‰РµРЅРёР№, РїРµСЂРµРґР°РµС‚СЃСЏ РїРѕ СѓРєР°Р·Р°С‚РµР»СЋ РІ TArray.getSelection С‡РµСЂРµР· С„СѓРЅРєС†РёСЋ getFresh (СЃРј. РЅРёР¶Рµ)
+	// предикат (условие) для отбора непрочитанных сообщений, передается по указателю в TArray.getSelection через функцию getFresh (см. ниже)
 	bool Messages::selectFresh(const Message& m, Message& c)
 	{
 		bool result = false;
@@ -65,7 +65,7 @@ namespace aiafpb1
 		Message c;
 		return m_mess.getSelection(selectCommon, c);
 	}
-
+	
 	std::vector<std::reference_wrapper<Message>> Messages::getPaired(Message& c)
 	{
 		return m_mess.getSelection(selectPaired, c);
